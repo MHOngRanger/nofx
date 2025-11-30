@@ -470,11 +470,11 @@ func buildUserPrompt(ctx *Context) string {
 				pos.EntryPrice, pos.MarkPrice, pos.Quantity, positionValue, pos.UnrealizedPnLPct, pos.UnrealizedPnL, pos.PeakPnLPct,
 				pos.Leverage, pos.MarginUsed, pos.LiquidationPrice, holdingDuration))
 
-			// 使用FormatMarketData输出完整市场数据
-			if marketData, ok := ctx.MarketDataMap[pos.Symbol]; ok {
-				sb.WriteString(market.Format(marketData))
-				sb.WriteString("\n")
-			}
+			// // 使用FormatMarketData输出完整市场数据
+			// if marketData, ok := ctx.MarketDataMap[pos.Symbol]; ok {
+				// sb.WriteString(market.Format(marketData))
+				// sb.WriteString("\n")
+			// }
 		}
 	} else {
 		sb.WriteString("当前持仓: 无\n\n")
@@ -500,7 +500,15 @@ func buildUserPrompt(ctx *Context) string {
 		// 使用FormatMarketData输出完整市场数据
 		sb.WriteString(fmt.Sprintf("### %d. %s%s\n\n", displayedCount, coin.Symbol, sourceTags))
 		sb.WriteString(market.Format(marketData))
-		sb.WriteString("\n")
+		// sb.WriteString("\n")
+		
+		if oiData, hasOI := ctx.OITopDataMap[coin.Symbol]; hasOI {  
+			sb.WriteString(fmt.Sprintf("Open Interest Data: OI变化 %+.4f%% | 价格变化 %+.5f%% | 净多仓 %.0f | 净空仓 %.0f\n\n",   
+				oiData.OIDeltaPercent,  
+				oiData.PriceDeltaPercent,  
+				oiData.NetLong,  
+				oiData.NetShort))  
+		}
 	}
 	sb.WriteString("\n")
 

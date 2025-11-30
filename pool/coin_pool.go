@@ -413,7 +413,7 @@ var oiTopConfig = struct {
 	Timeout  time.Duration
 	CacheDir string
 }{
-	APIURL:   "",
+	APIURL:   "http://oitop-api:8000",
 	Timeout:  30 * time.Second,
 	CacheDir: "coin_pool_cache",
 }
