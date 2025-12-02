@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"math"
+	"nofx/custom_data"
 	"nofx/market"
 	"nofx/mcp"
 	"nofx/pool"
@@ -472,8 +473,8 @@ func buildUserPrompt(ctx *Context) string {
 
 			// // 使用FormatMarketData输出完整市场数据
 			// if marketData, ok := ctx.MarketDataMap[pos.Symbol]; ok {
-				// sb.WriteString(market.Format(marketData))
-				// sb.WriteString("\n")
+			// sb.WriteString(market.Format(marketData))
+			// sb.WriteString("\n")
 			// }
 		}
 	} else {
@@ -499,16 +500,27 @@ func buildUserPrompt(ctx *Context) string {
 
 		// 使用FormatMarketData输出完整市场数据
 		sb.WriteString(fmt.Sprintf("### %d. %s%s\n\n", displayedCount, coin.Symbol, sourceTags))
+
+		sb.WriteString("#### Market Data\n")
 		sb.WriteString(market.Format(marketData))
 		// sb.WriteString("\n")
-		
-		if oiData, hasOI := ctx.OITopDataMap[coin.Symbol]; hasOI {  
-			sb.WriteString(fmt.Sprintf("Open Interest Data: OI变化 %+.4f%% | 价格变化 %+.5f%% | 净多仓 %.0f | 净空仓 %.0f\n\n",   
-				oiData.OIDeltaPercent,  
-				oiData.PriceDeltaPercent,  
-				oiData.NetLong,  
-				oiData.NetShort))  
+
+		sb.WriteString("#### Open Interest Data\n")
+		if oiData, hasOI := ctx.OITopDataMap[coin.Symbol]; hasOI {
+			sb.WriteString(fmt.Sprintf("OI变化 %+.4f%% | 价格变化 %+.5f%% | 净多仓 %.0f | 净空仓 %.0f\n\n",
+				oiData.OIDeltaPercent,
+				oiData.PriceDeltaPercent,
+				oiData.NetLong,
+				oiData.NetShort))
 		}
+
+		sb.WriteString("#### Cumulative Volume Delta\n")
+		sb.WriteString(custom_data.GetCumulativeVolumeDelta(coin.Symbol) + "\n")
+		sb.WriteString("#### Market Depth Data\n")
+		sb.WriteString(custom_data.GetMarketDepth(coin.Symbol) + "\n")
+		sb.WriteString("#### Liquidation Data\n")
+		sb.WriteString(custom_data.GetLiquidationData(coin.Symbol) + "\n\n")
+
 	}
 	sb.WriteString("\n")
 
